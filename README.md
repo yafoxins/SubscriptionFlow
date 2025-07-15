@@ -9,11 +9,11 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-green?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue?style=flat-square&logo=python)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Redis-7-alpine-red?style=flat-square&logo=redis)](https://redis.io/)
+[![Redis](https://img.shields.io/badge/Redis-7--alpine-red?style=flat-square)](https://redis.io/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=flat-square&logo=docker)](https://www.docker.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0-purple?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-[🚀 Демо](https://sub.yafoxin.ru) • [📖 Документация](#) • [🐛 Баги](https://github.com/yafoxins/subscription-flow/issues) • [💡 Предложения](https://github.com/yafoxins/subscription-flow/issues)
+[🚀 Демо](https://sub.yafoxin.ru) • [📖 Документация](#) • [🐛 Баги](https://github.com/yafoxins/SubscriptionFlow/issues) • [💡 Предложения](https://github.com/yafoxins/SubscriptionFlow/issues)
 
 </div>
 
@@ -25,6 +25,9 @@
 
 ### 🏠 Главная страница
 ![Главная страница](images/home.png)
+
+<details>
+<summary>📊 Другие скриншоты</summary>
 
 ### 📊 Дашборд
 ![Дашборд](images/dashboard.png)
@@ -40,6 +43,8 @@
 
 ### 👨‍💼 Админ панель
 ![Админ панель](images/admin.png)
+
+</details>
 
 </div>
 
@@ -481,8 +486,8 @@ If you like the project, you can support its development:
 
 **⭐ Если проект вам понравился, поставьте звездочку! ⭐**
 
-[![GitHub stars](https://img.shields.io/github/stars/yafoxins/subscription-flow?style=social)](https://github.com/yafoxins/subscription-flow)
-[![GitHub forks](https://img.shields.io/github/forks/yafoxins/subscription-flow?style=social)](https://github.com/yafoxins/subscription-flow)
-[![GitHub issues](https://img.shields.io/github/issues/yafoxins/subscription-flow)](https://github.com/yafoxins/subscription-flow/issues)
+[![GitHub stars](https://img.shields.io/github/stars/yafoxins/SubscriptionFlow?style=social)](https://github.com/yafoxins/SubscriptionFlow)
+[![GitHub forks](https://img.shields.io/github/forks/yafoxins/SubscriptionFlow?style=social)](https://github.com/yafoxins/SubscriptionFlow)
+[![GitHub issues](https://img.shields.io/github/issues/yafoxins/SubscriptionFlow)](https://github.com/yafoxins/SubscriptionFlow/issues)
 
 </div> 
