@@ -1,0 +1,717 @@
+/* Категории, карточки, уведомления, селекторы */
+.category-select {
+    font-size: 1rem;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") no-repeat right 0.75rem center/1.5em 1.5em;
+    transition: border 0.2s;
+}
+
+.category-select:focus {
+    border-color: #a78bfa;
+    outline: none;
+}
+
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: 0.95em;
+    font-weight: 500;
+    border-radius: 0.5em;
+    padding: 0.15em 0.7em 0.15em 0.5em;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.category-badge.streaming {
+    background: #e0e7ff;
+    color: #6366f1;
+}
+
+.category-badge.software {
+    background: #fef9c3;
+    color: #eab308;
+}
+
+.category-badge.music {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.category-badge.gaming {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.category-badge.other {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.subscription-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(80, 80, 120, 0.06);
+    border: 1px solid #e5e7eb;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.2rem;
+    transition: box-shadow 0.2s, border 0.2s;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.2rem;
+}
+
+.subscription-card:hover {
+    box-shadow: 0 6px 24px rgba(80, 80, 120, 0.13);
+    border-color: #a78bfa;
+}
+
+.subscription-info {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+
+.subscription-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0.7em;
+    min-width: 120px;
+    justify-content: flex-end;
+}
+
+.subscription-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #18181b;
+    margin-bottom: 0.1em;
+    word-break: break-word;
+}
+
+.subscription-desc {
+    font-size: 0.97em;
+    color: #6b7280;
+    margin-bottom: 0.3em;
+    word-break: break-word;
+}
+
+.subscription-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    font-size: 0.97em;
+    color: #6b7280;
+    margin-bottom: 0.2em;
+}
+
+.subscription-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+    color: #6366f1;
+    font-size: 1.1em;
+    text-decoration: none;
+    margin-left: 0.5em;
+    transition: color 0.15s;
+}
+
+.subscription-link:hover {
+    color: #4f46e5;
+    text-decoration: underline;
+}
+
+.subscription-price {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #18181b;
+    margin-bottom: 0.2em;
+    text-align: right;
+}
+
+.subscription-next {
+    font-size: 0.97em;
+    color: #6b7280;
+    text-align: right;
+}
+
+.subscription-actions button {
+    font-size: 0.97em;
+    padding: 0.2em 0.7em;
+    border-radius: 0.4em;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.subscription-actions .edit-btn {
+    color: #6366f1;
+}
+
+.subscription-actions .edit-btn:hover {
+    background: #eef2ff;
+}
+
+.subscription-actions .delete-btn {
+    color: #ef4444;
+}
+
+.subscription-actions .delete-btn:hover {
+    background: #fee2e2;
+}
+
+.subscription-actions .calendar-btn {
+    color: #059669;
+}
+
+.subscription-actions .calendar-btn:hover {
+    background: #d1fae5;
+}
+
+/* Кнопка календаря в разработке */
+.subscription-actions .calendar-btn {
+    position: relative;
+}
+
+.subscription-actions .calendar-btn::after {
+    content: "DEV";
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #f59e0b;
+    color: white;
+    font-size: 0.6em;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.notifications-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #a1a1aa;
+    font-size: 1.1em;
+    padding: 2em 0;
+    gap: 0.7em;
+}
+
+.notifications-empty i {
+    font-size: 2.2em;
+    color: #e0e7ff;
+}
+
+/* Кастомный dropdown для категории */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    outline: none;
+}
+
+.custom-dropdown-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: border 0.2s;
+    min-height: 2.5rem;
+    font-weight: 400;
+    color: #18181b;
+}
+
+.custom-dropdown.open .custom-dropdown-selected,
+.custom-dropdown-selected:focus,
+.custom-dropdown-selected:hover {
+    border-color: #a78bfa;
+}
+
+.custom-dropdown-arrow {
+    margin-left: 0.7em;
+    color: #a1a1aa;
+    font-size: 1em;
+}
+
+.custom-dropdown-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 110%;
+    z-index: 10;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(80, 80, 120, 0.10);
+    margin: 0;
+    padding: 0.3em 0;
+    list-style: none;
+    font-weight: 400;
+    color: #18181b;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.custom-dropdown-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    padding: 0.5em 1.2em 0.5em 1em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-weight: 400;
+    font-size: 1em;
+    border: none;
+    background: none;
+}
+
+.custom-dropdown-list li:hover,
+.custom-dropdown-list li:focus {
+    background: #f3f4f6;
+    color: #7c3aed;
+}
+
+.custom-dropdown-icon {
+    min-width: 1.2em;
+    text-align: center;
+    font-size: 1.1em;
+    color: #a1a1aa;
+}
+
+.custom-dropdown.open .custom-dropdown-list {
+    display: block;
+}
+
+/* Индикатор активности */
+.sub-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 0.97em;
+    font-weight: 500;
+    border-radius: 0.5em;
+    padding: 0.1em 0.7em 0.1em 0.5em;
+    margin-left: 0.3em;
+    background: #f3f4f6;
+    color: #6b7280;
+    opacity: 0.85;
+}
+
+.sub-status.active {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.sub-status.inactive {
+    background: #f3f4f6;
+    color: #a1a1aa;
+}
+
+.sub-status i {
+    font-size: 0.8em;
+}
+
+/* Бейдж даты */
+.next-badge {
+    display: inline-block;
+    background: #eef2ff;
+    color: #6366f1;
+    border-radius: 0.5em;
+    padding: 0.13em 0.7em;
+    font-size: 0.97em;
+    font-weight: 500;
+    margin-left: 0.2em;
+}
+
+.next-badge.soon {
+    background: #fef9c3;
+    color: #eab308;
+}
+
+/* Приглушённая карточка */
+.subscription-inactive {
+    opacity: 0.65;
+    filter: grayscale(0.15) brightness(0.97);
+    background: #f8fafc;
+    border-style: dashed;
+}
+
+/* Кнопки-иконки */
+.icon-btn {
+    background: none;
+    border: none;
+    color: #a1a1aa;
+    font-size: 1.15em;
+    padding: 0.25em 0.5em;
+    border-radius: 0.4em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    outline: none;
+    margin: 0 0.1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.icon-btn.edit-btn:hover {
+    color: #6366f1;
+    background: #eef2ff;
+}
+
+.icon-btn.delete-btn:hover {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
+.icon-btn.deactivate-btn:hover {
+    color: #eab308;
+    background: #fef9c3;
+}
+
+.icon-btn.reactivate-btn {
+    color: #059669;
+    font-weight: 500;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    margin-top: 0.5em;
+}
+
+.icon-btn.reactivate-btn:hover {
+    background: #bbf7d0;
+    color: #166534;
+}
+
+/* Сайт-иконка с tooltip */
+.site-icon {
+    color: #6366f1;
+    position: relative;
+    text-decoration: none;
+}
+
+.site-icon:hover {
+    color: #4f46e5;
+}
+
+.site-icon[title]:hover:after {
+    content: attr(title);
+    position: absolute;
+    left: 50%;
+    bottom: 120%;
+    transform: translateX(-50%);
+    background: #18181b;
+    color: #fff;
+    padding: 0.3em 0.7em;
+    border-radius: 0.4em;
+    font-size: 0.95em;
+    white-space: nowrap;
+    z-index: 20;
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+/* --- Предстоящие платежи --- */
+.upcoming-bill-card {
+    background: #fefce8;
+    border-radius: 1em;
+    box-shadow: 0 2px 8px rgba(255, 215, 80, 0.07);
+    padding: 1em 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.7em;
+    border: 1px solid #fef3c7;
+    transition: box-shadow 0.2s;
+}
+
+.upcoming-bill-card .bill-title {
+    font-weight: 600;
+    font-size: 1.08em;
+    color: #18181b;
+}
+
+.upcoming-bill-card .bill-date {
+    font-weight: 600;
+    color: #7c3aed;
+    background: #ede9fe;
+    border-radius: 0.5em;
+    padding: 0.15em 0.7em;
+    font-size: 0.98em;
+    margin-bottom: 0.1em;
+    display: inline-block;
+}
+
+.upcoming-bill-card .bill-days {
+    color: #a1a1aa;
+    font-size: 0.95em;
+    margin-top: 0.1em;
+}
+
+/* --- Уведомления --- */
+.notification-card {
+    background: #f1f5f9;
+    border-radius: 0.8em;
+    padding: 0.9em 1.1em;
+    margin-bottom: 0.7em;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7em;
+    box-shadow: 0 2px 8px rgba(80, 80, 120, 0.06);
+    border: 1px solid #e0e7ef;
+}
+
+.notification-card .notif-icon {
+    color: #6366f1;
+    font-size: 1.3em;
+    margin-top: 0.1em;
+}
+
+.notification-card .notif-content {
+    flex: 1;
+}
+
+.notification-card .notif-date {
+    color: #a1a1aa;
+    font-size: 0.93em;
+    margin-top: 0.2em;
+}
+
+/* --- Иконки в подписках --- */
+.category-badge i,
+.subscription-meta i,
+.site-icon i {
+    font-size: 1.08em !important;
+    vertical-align: middle;
+    margin-right: 0.18em;
+}
+
+/* --- Исправление подчёркивания у иконки сайта --- */
+.site-icon {
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
+.site-icon:hover {
+    color: #4f46e5;
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
+/* --- Toast уведомления --- */
+#toastContainer {
+    position: fixed;
+    right: 2.2em;
+    top: 2.2em;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    pointer-events: none;
+    min-width: 320px;
+    max-width: 420px;
+}
+
+.toast {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.7em !important;
+    min-width: 260px !important;
+    max-width: 420px !important;
+    background: #fff !important;
+    color: #18181b !important;
+    border-radius: 0.8em !important;
+    box-shadow: 0 6px 32px rgba(80, 80, 120, 0.13), 0 1.5px 6px rgba(80, 80, 120, 0.07) !important;
+    border: 1.5px solid #e0e7ef !important;
+    padding: 1em 1.3em !important;
+    font-size: 1.08em !important;
+    font-weight: 500 !important;
+    position: relative !important;
+    margin-bottom: 1em !important;
+    opacity: 0 !important;
+    transform: translateY(0) scale(0.98) !important;
+    transition: opacity 0.25s, transform 0.25s !important;
+    z-index: 1200 !important;
+    pointer-events: auto !important;
+}
+
+.toast.show {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+.toast.hide {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+}
+
+.toast button {
+    background: none !important;
+    border: none !important;
+    color: #a1a1aa !important;
+    font-size: 1.2em !important;
+    margin-left: auto !important;
+    cursor: pointer !important;
+    padding: 0 0.2em !important;
+    border-radius: 0.3em !important;
+    transition: background 0.15s, color 0.15s !important;
+}
+
+.toast button:hover {
+    background: #f3f4f6 !important;
+    color: #ef4444 !important;
+}
+
+.toast-success {
+    border-left: 5px solid #22c55e !important;
+}
+
+.toast-error {
+    border-left: 5px solid #ef4444 !important;
+}
+
+.toast-info {
+    border-left: 5px solid #6366f1 !important;
+}
+
+.toast-admin {
+    border-left: 5px solid #f59e42 !important;
+    background: #fff7ed !important;
+}
+
+.toast .toast-icon {
+    font-size: 1.3em !important;
+    margin-right: 0.2em !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* --- Admin/System уведомления --- */
+.notification-card.admin {
+    background: #fff7ed;
+    border-left: 5px solid #f59e42;
+}
+
+.notification-card.admin .notif-icon {
+    color: #f59e42;
+}
+
+.notification-card .notif-badge {
+    display: inline-block;
+    background: #f59e42;
+    color: #fff;
+    font-size: 0.85em;
+    font-weight: 600;
+    border-radius: 0.5em;
+    padding: 0.13em 0.7em;
+    margin-left: 0.5em;
+    vertical-align: middle;
+}
+
+.notification-card.system .notif-icon {
+    color: #6366f1;
+}
+
+/* --- Подписи и блоки в карточке подписки --- */
+.subscription-price-block,
+.subscription-next-block {
+    text-align: right;
+    margin-bottom: 0.2em;
+}
+
+.subscription-price-label,
+.subscription-next-label {
+    font-size: 0.93em;
+    color: #a1a1aa;
+    font-weight: 500;
+    margin-bottom: 0.1em;
+}
+
+.subscription-price {
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: #18181b;
+    background: #f3f4f6;
+    border-radius: 0.5em;
+    padding: 0.13em 0.7em;
+    display: inline-block;
+}
+
+.subscription-next {
+    font-size: 1.05em;
+    color: #6366f1;
+    background: #eef2ff;
+    border-radius: 0.5em;
+    padding: 0.13em 0.7em;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.subscription-inactive .subscription-next {
+    color: #a1a1aa;
+    background: #f3f4f6;
+}
+
+/* --- Ошибки в формах --- */
+.error-message {
+    color: #ef4444;
+    background: #fff1f2;
+    border: 1.5px solid #ef4444;
+    border-radius: 0.5em;
+    padding: 0.7em 1em;
+    margin-bottom: 0.5em;
+    font-size: 1em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.07);
+    animation: fadeInError 0.3s;
+}
+
+@keyframes fadeInError {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+    background: #fff1f2 !important;
+    box-shadow: 0 0 0 2px #fca5a5 !important;
+    transition: border 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+/* --- Яркий бейдж для цены --- */
+.subscription-price-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #6366f1 0%, #7c3aed 100%);
+    color: #fff;
+    font-size: 1.18rem;
+    font-weight: 700;
+    border-radius: 0.7em;
+    padding: 0.18em 1.1em;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+    letter-spacing: 0.01em;
+    margin-bottom: 0.1em;
+    margin-top: 0.1em;
+    transition: box-shadow 0.2s;
+}
+
+.subscription-card:hover .subscription-price-badge {
+    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.13);
+}

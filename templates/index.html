@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Subscription Manager{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden">
+    <!-- Hero Section -->
+    <div class="gradient-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                    Управляйте своими подписками
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90">
+                    Отслеживайте расходы, получайте уведомления и анализируйте статистику
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/register"
+                        class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-rocket mr-2"></i>Начать бесплатно
+                    </a>
+                    <a href="/login"
+                        class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-white hover:text-purple-600 transition-colors">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Войти
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Возможности платформы
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Все что нужно для эффективного управления подписками
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-chart-pie text-2xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Аналитика расходов</h3>
+                        <p class="text-gray-600">
+                            Детальная статистика по категориям, ежемесячные и годовые отчеты
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-bell text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Умные уведомления</h3>
+                        <p class="text-gray-600">
+                            Получайте напоминания о предстоящих платежах и истечении подписок
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Доступ везде</h3>
+                        <p class="text-gray-600">
+                            Удобный веб-интерфейс, доступный с любого устройства
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Почему выбирают нас
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">100%</div>
+                    <div class="text-gray-600">Бесплатно</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">24/7</div>
+                    <div class="text-gray-600">Доступность</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-green-600 mb-2">Безопасно</div>
+                    <div class="text-gray-600">Защита данных</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-orange-600 mb-2">Просто</div>
+                    <div class="text-gray-600">В использовании</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Готовы начать?
+            </h2>
+            <p class="text-xl text-gray-600 mb-8">
+                Присоединяйтесь к тысячам пользователей, которые уже управляют своими подписками эффективно
+            </p>
+            <a href="/register" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg inline-block">
+                <i class="fas fa-user-plus mr-2"></i>Создать аккаунт
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

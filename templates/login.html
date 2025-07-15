@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - Subscription Manager{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">
+                Войти в аккаунт
+            </h2>
+            <p class="text-gray-600">
+                Продолжите управление подписками
+            </p>
+        </div>
+
+        <div class="bg-white py-8 px-6 shadow-xl rounded-lg">
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user mr-2"></i>Имя пользователя
+                    </label>
+                    <input type="text" id="username" name="username" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-lock mr-2"></i>Пароль
+                    </label>
+                    <input type="password" id="password" name="password" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+
+                <div id="errorMessage" class="hidden text-red-600 text-sm"></div>
+
+                <button type="submit" class="w-full btn-primary text-white py-3 px-4 rounded-md font-medium text-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Войти
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                    Нет аккаунта?
+                    <a href="/register" class="text-purple-600 hover:text-purple-500 font-medium">
+                        Зарегистрироваться
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Сброс ошибки
+        errorMessage.classList.add('hidden');
+
+        try {
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Сохраняем токен
+                setToken(data.access_token);
+
+                // Перенаправляем на дашборд
+                window.location.href = '/dashboard';
+            } else {
+                errorMessage.textContent = data.detail || 'Ошибка при входе';
+                errorMessage.classList.remove('hidden');
+            }
+        } catch (error) {
+            errorMessage.textContent = 'Ошибка соединения';
+            errorMessage.classList.remove('hidden');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Subscription Manager{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/base.css">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center space-x-2">
+                        <i class="fas fa-chart-line text-2xl text-purple-600"></i>
+                        <span class="text-xl font-bold text-gray-900">Subscription Manager</span>
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4" id="navbarAuthBlock">
+                    {% if request.url.path == "/" %}
+                    <a href="/login"
+                        class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium auth-btn">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Войти
+                    </a>
+                    <a href="/register"
+                        class="btn-primary text-white px-4 py-2 rounded-md text-sm font-medium auth-btn">
+                        <i class="fas fa-user-plus mr-2"></i>Регистрация
+                    </a>
+                    {% else %}
+                    <a href="/dashboard"
+                        class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium auth-btn">
+                        <i class="fas fa-tachometer-alt mr-2"></i>Дашборд
+                    </a>
+                    <a href="/analytics"
+                        class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium auth-btn">
+                        <i class="fas fa-chart-line mr-2"></i>Аналитика
+                    </a>
+                    <a href="/settings"
+                        class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium auth-btn">
+                        <i class="fas fa-cog mr-2"></i>Настройки
+                    </a>
+                    <button onclick="logout()"
+                        class="text-gray-600 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium auth-btn">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Выйти
+                    </button>
+                    {% endif %}
+                    <!-- User info (динамически) -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-modern mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="text-center flex flex-col items-center gap-2">
+                <div class="footer-divider"></div>
+                <p class="footer-text flex items-center gap-2">
+                    <span class="footer-icon"><i class="fas fa-copyright"></i></span>
+                    2025 <a href="https://github.com/yafoxins" target="_blank" rel="noopener"
+                        class="footer-link">Aleksandr Timkov</a> Subscription Manager. Все права защищены.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        }
+
+        function setToken(token) {
+            localStorage.setItem('token', token);
+        }
+
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        function getAuthHeaders() {
+            const token = getToken();
+            return {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+        }
+    </script>
+
+    <!-- --- Динамическая навигация и авто-редирект --- -->
+    <script>
+        (function () {
+            // Проверка токена и декодирование ника
+            function getUserNameFromToken() {
+                const token = getToken();
+                if (!token) return null;
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    return payload && payload.sub ? payload.sub : null;
+                } catch (e) { return null; }
+            }
+            // На главной: если есть токен — редиректим на dashboard
+            if (window.location.pathname === '/') {
+                const token = getToken();
+                if (token) {
+                    // Можно добавить проверку срока действия токена (exp), если нужно
+                    window.location.href = '/dashboard';
+                }
+            }
+            // В шапке: если есть токен — показываем иконку и ник
+            const navbar = document.getElementById('navbarAuthBlock');
+            if (navbar) {
+                const token = getToken();
+                let userName = null, isAdmin = false;
+                if (token) {
+                    try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        userName = payload && payload.sub ? payload.sub : null;
+                        isAdmin = payload && payload.is_admin;
+                    } catch (e) { }
+                }
+                if (userName) {
+                    // Удаляем кнопки Войти/Регистрация/Выйти
+                    navbar.querySelectorAll('.auth-btn').forEach(el => el.style.display = 'none');
+                    // Добавляем блок пользователя
+                    const userBlock = document.createElement('div');
+                    userBlock.className = 'relative group';
+                    userBlock.innerHTML = `
+                        <button id="userMenuBtn" class="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none">
+                            <i class="fas fa-user-circle text-2xl text-purple-600 mr-2"></i>
+                            <span class="font-medium">${userName}</span>
+                            ${isAdmin ? '<span class="admin-badge ml-2"><i class="fas fa-crown"></i> admin</span>' : ''}
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                            <a href="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-gray-50"><i class="fas fa-tachometer-alt mr-2"></i>Дашборд</a>
+                            <a href="/analytics" class="block px-4 py-2 text-gray-700 hover:bg-gray-50"><i class="fas fa-chart-line mr-2"></i>Аналитика</a>
+                            <a href="/settings" class="block px-4 py-2 text-gray-700 hover:bg-gray-50"><i class="fas fa-cog mr-2"></i>Настройки</a>
+                            ${isAdmin ? '<a href="/admin" class="block px-4 py-2 text-purple-700 hover:bg-purple-50"><i class="fas fa-user-shield mr-2"></i>Админ</a>' : ''}
+                            <button onclick="logout()" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50"><i class="fas fa-sign-out-alt mr-2"></i>Выйти</button>
+                        </div>
+                    `;
+                    navbar.appendChild(userBlock);
+                    // Логика выпадающего меню
+                    const btn = document.getElementById('userMenuBtn');
+                    const dropdown = document.getElementById('userMenuDropdown');
+                    btn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        dropdown.classList.toggle('hidden');
+                    });
+                    document.addEventListener('click', function (e) {
+                        if (!userBlock.contains(e.target)) dropdown.classList.add('hidden');
+                    });
+                }
+            }
+        })();
+    </script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Toast контейнер всегда внизу, вне основного контента -->
+    <div id="toastContainer"></div>
+</body>
+
+</html>

@@ -1,0 +1,749 @@
+{% extends "base.html" %}
+
+{% block title %}Аналитика - Subscription Manager{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/dashboard.css">
+<style>
+    .chart-container {
+        height: 300px !important;
+        max-height: 300px !important;
+        overflow: hidden !important;
+    }
+
+    .chart-container canvas {
+        max-height: 300px !important;
+        height: 300px !important;
+    }
+
+    /* Предотвращаем растягивание Chart.js */
+    .chart-container>div {
+        height: 300px !important;
+        max-height: 300px !important;
+    }
+</style>
+<div id="toastContainer"></div>
+
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    <i class="fas fa-chart-line mr-3"></i>Аналитика расходов
+                </h1>
+                <p class="text-gray-600">Детальная аналитика ваших подписок и прогнозы</p>
+            </div>
+            <div class="flex gap-3 items-center">
+                <button onclick="refreshAnalytics()"
+                    class="btn-secondary text-gray-700 px-4 py-2 rounded-lg font-medium" title="Обновить данные">
+                    <i class="fas fa-sync-alt mr-2"></i>Обновить
+                </button>
+                <button onclick="exportAnalytics('json')"
+                    class="btn-secondary text-gray-700 px-4 py-2 rounded-lg font-medium">
+                    <i class="fas fa-file-code mr-2"></i>Экспорт JSON
+                </button>
+                <button onclick="exportAnalytics('csv')"
+                    class="btn-secondary text-gray-700 px-4 py-2 rounded-lg font-medium">
+                    <i class="fas fa-file-csv mr-2"></i>Экспорт CSV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-blue-100 p-3 rounded-lg">
+                    <i class="fas fa-calendar-alt text-2xl text-blue-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Текущий месяц</p>
+                    <p class="text-2xl font-bold text-gray-900" id="currentMonthExpense">-</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-green-100 p-3 rounded-lg">
+                    <i class="fas fa-chart-bar text-2xl text-green-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Средний расход</p>
+                    <p class="text-2xl font-bold text-gray-900" id="averageMonthly">-</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-purple-100 p-3 rounded-lg">
+                    <i class="fas fa-magic text-2xl text-purple-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Прогноз</p>
+                    <p class="text-2xl font-bold text-gray-900" id="forecastAmount">-</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-orange-100 p-3 rounded-lg">
+                    <i class="fas fa-chart-line text-2xl text-orange-600"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Тренд</p>
+                    <p class="text-2xl font-bold text-gray-900" id="trendIndicator">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Monthly Expenses Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-chart-line mr-2"></i>Расходы по месяцам
+            </h3>
+            <div class="chart-container" style="height: 300px; position: relative; overflow: hidden;">
+                <canvas id="monthlyChart" style="max-height: 300px !important;"></canvas>
+            </div>
+        </div>
+
+        <!-- Categories Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-chart-pie mr-2"></i>Распределение по категориям
+            </h3>
+            <div class="chart-container" style="height: 300px; position: relative; overflow: hidden;">
+                <canvas id="categoriesChart" style="max-height: 300px !important;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Analytics -->
+    <div class="grid lg:grid-cols-3 gap-6">
+        <!-- Categories Breakdown -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-list mr-2"></i>Детализация по категориям
+            </h3>
+            <div id="categoriesBreakdown" class="space-y-3">
+                <!-- Categories will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Forecast Details -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-magic mr-2"></i>Прогноз на следующий месяц
+            </h3>
+            <div id="forecastDetails" class="space-y-4">
+                <!-- Forecast details will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-lightbulb mr-2"></i>Инсайты
+            </h3>
+            <div id="insights" class="space-y-3">
+                <!-- Insights will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<script>
+    let monthlyChart, categoriesChart;
+
+    // Карта переводов категорий
+    const categoryTranslations = {
+        'streaming': 'Стриминг',
+        'software': 'Программное обеспечение',
+        'music': 'Музыка',
+        'gaming': 'Игры',
+        'education': 'Образование',
+        'fitness': 'Фитнес',
+        'news': 'Новости',
+        'productivity': 'Продуктивность',
+        'security': 'Безопасность',
+        'storage': 'Хранилище',
+        'other': 'Другое',
+        '': 'Без категории'
+    };
+
+    // Функция для перевода категории
+    function translateCategory(category) {
+        return categoryTranslations[category] || category || 'Без категории';
+    }
+
+    // Функция для получения оригинального названия категории (для цветов)
+    function getOriginalCategory(translatedCategory) {
+        for (const [original, translated] of Object.entries(categoryTranslations)) {
+            if (translated === translatedCategory) {
+                return original;
+            }
+        }
+        return translatedCategory;
+    }
+
+    // Load analytics data
+    async function loadAnalytics() {
+        try {
+            // Добавляем параметр для принудительного обновления кэша
+            const timestamp = new Date().getTime();
+            const response = await fetch(`/api/analytics/summary?t=${timestamp}`, {
+                headers: getAuthHeaders()
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                updateStats(data);
+                createCharts(data);
+                updateDetails(data);
+            } else {
+                console.error('Analytics API error:', response.status, response.statusText);
+                showToast('Ошибка загрузки аналитики', 'error');
+                // Показываем fallback данные
+                showFallbackData();
+            }
+        } catch (error) {
+            console.error('Error loading analytics:', error);
+            showToast('Ошибка соединения', 'error');
+            // Показываем fallback данные
+            showFallbackData();
+        }
+    }
+
+    // Fallback data when API fails
+    function showFallbackData() {
+        const fallbackData = {
+            total_current_month: 0,
+            average_monthly: 0,
+            forecast: { next_month: 0, trend: 'stable', change_percentage: 0 },
+            expenses_by_month: [],
+            categories_data: []
+        };
+
+        updateStats(fallbackData);
+        createCharts(fallbackData);
+        updateDetails(fallbackData);
+
+        // Показываем сообщение о том, что данные недоступны
+        document.getElementById('categoriesBreakdown').innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-chart-line text-4xl mb-4"></i>
+                <p>Данные аналитики временно недоступны</p>
+                <p class="text-sm">Попробуйте обновить страницу позже</p>
+            </div>
+        `;
+    }
+
+    // Update statistics cards
+    function updateStats(data) {
+        try {
+            const currentMonthElement = document.getElementById('currentMonthExpense');
+            const averageMonthlyElement = document.getElementById('averageMonthly');
+            const forecastAmountElement = document.getElementById('forecastAmount');
+
+            if (currentMonthElement) {
+                currentMonthElement.textContent = `${data.total_current_month || 0} ₽`;
+            }
+
+            if (averageMonthlyElement) {
+                const avg = data.average_monthly || 0;
+                averageMonthlyElement.textContent = `${avg.toFixed(0)} ₽`;
+            }
+
+            if (forecastAmountElement) {
+                forecastAmountElement.textContent = `${data.forecast?.next_month || 0} ₽`;
+            }
+
+            const trendElement = document.getElementById('trendIndicator');
+            if (trendElement) {
+                const trend = data.forecast?.trend || 'stable';
+                const changePercent = data.forecast?.change_percentage || 0;
+
+                if (trend === 'increasing') {
+                    trendElement.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-arrow-up text-red-500"></i>
+                            <span class="text-lg font-semibold text-gray-900">Рост</span>
+                            <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">+${changePercent}%</span>
+                        </div>
+                    `;
+                    trendElement.className = 'text-2xl font-bold flex items-center';
+                } else if (trend === 'decreasing') {
+                    trendElement.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-arrow-down text-green-500"></i>
+                            <span class="text-lg font-semibold text-gray-900">Снижение</span>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${changePercent}%</span>
+                        </div>
+                    `;
+                    trendElement.className = 'text-2xl font-bold flex items-center';
+                } else {
+                    trendElement.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-minus text-gray-500"></i>
+                            <span class="text-lg font-semibold text-gray-900">Стабильно</span>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">0%</span>
+                        </div>
+                    `;
+                    trendElement.className = 'text-2xl font-bold flex items-center';
+                }
+            }
+        } catch (error) {
+            console.error('Error updating stats:', error);
+        }
+    }
+
+    // Create charts
+    function createCharts(data) {
+        try {
+            // Monthly expenses chart
+            const monthlyCtx = document.getElementById('monthlyChart');
+            if (!monthlyCtx) {
+                console.error('Monthly chart canvas not found');
+                return;
+            }
+
+            if (monthlyChart) monthlyChart.destroy();
+
+            const monthlyData = data.expenses_by_month || [];
+
+            if (monthlyData.length === 0) {
+                // Показываем сообщение о том, что нет данных
+                const chartContainer = monthlyCtx.parentElement;
+                chartContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-500" style="height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <i class="fas fa-chart-line text-4xl mb-4"></i>
+                        <p>Нет данных для отображения</p>
+                        <p class="text-sm">Добавьте подписки с прошедшими платежами</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const labels = monthlyData.map(item => {
+                try {
+                    const [year, month] = item.month.split('-');
+                    return new Date(year, month - 1).toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' });
+                } catch (e) {
+                    return item.month || 'Неизвестно';
+                }
+            });
+
+            const values = monthlyData.map(item => item.total || 0);
+
+            console.log('Monthly chart data:', { labels, values, monthlyData });
+
+            monthlyChart = new Chart(monthlyCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Расходы (₽)',
+                        data: values,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#6366f1',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Расходы: ' + context.parsed.y + ' ₽';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value + ' ₽';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error creating monthly chart:', error);
+        }
+
+        try {
+            // Categories chart
+            const categoriesCtx = document.getElementById('categoriesChart');
+            if (!categoriesCtx) {
+                console.error('Categories chart canvas not found');
+                return;
+            }
+
+            if (categoriesChart) categoriesChart.destroy();
+
+            const categoriesData = data.categories_data || [];
+
+            if (categoriesData.length === 0) {
+                // Показываем сообщение о том, что нет данных
+                const chartContainer = categoriesCtx.parentElement;
+                chartContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-500" style="height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <i class="fas fa-chart-pie text-4xl mb-4"></i>
+                        <p>Нет данных для отображения</p>
+                        <p class="text-sm">Добавьте подписки с категориями</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const labels = categoriesData.map(item => item.category);
+            const values = categoriesData.map(item => item.total || 0);
+
+            categoriesChart = new Chart(categoriesCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#a78bfa', '#fbbf24', '#34d399', '#60a5fa',
+                            '#f87171', '#f472b6', '#facc15', '#818cf8'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error creating categories chart:', error);
+        }
+    }
+
+    // Update detailed information
+    function updateDetails(data) {
+        try {
+            // Categories breakdown
+            const categoriesContainer = document.getElementById('categoriesBreakdown');
+            if (categoriesContainer) {
+                const categoriesData = data.categories_data || [];
+                if (categoriesData.length > 0) {
+                    // Сортируем категории по проценту (от большего к меньшему)
+                    const sortedCategories = [...categoriesData].sort((a, b) => b.percentage - a.percentage);
+                    categoriesContainer.innerHTML = sortedCategories.map(cat => `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full" style="background-color: ${getCategoryColor(getOriginalCategory(cat.category))}"></div>
+                                <span class="font-medium">${cat.category}</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold">${cat.total || 0} ₽</div>
+                                <div class="text-sm text-gray-500">${cat.percentage || 0}%</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    categoriesContainer.innerHTML = `
+                        <div class="text-center py-4 text-gray-500">
+                            <i class="fas fa-chart-pie text-2xl mb-2"></i>
+                            <p>Нет данных по категориям</p>
+                            <p class="text-sm">Добавьте подписки для отображения аналитики</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // Forecast details
+            const forecastContainer = document.getElementById('forecastDetails');
+            if (forecastContainer) {
+                const forecast = data.forecast || { next_month: 0, trend: 'stable', change_percentage: 0 };
+                const currentMonth = data.total_current_month || 0;
+                const averageMonthly = data.average_monthly || 0;
+
+                forecastContainer.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600">${forecast.next_month || 0} ₽</div>
+                            <div class="text-sm text-blue-500">Ожидаемые расходы</div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Тренд:</span>
+                                <span class="font-medium">${getTrendText(forecast.trend)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Изменение:</span>
+                                <span class="font-medium ${(forecast.change_percentage || 0) > 0 ? 'text-red-500' : 'text-green-500'}">
+                                    ${(forecast.change_percentage || 0) > 0 ? '+' : ''}${forecast.change_percentage || 0}%
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Текущий месяц:</span>
+                                <span class="font-medium">${currentMonth} ₽</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Средний расход:</span>
+                                <span class="font-medium">${averageMonthly.toFixed(0)} ₽</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Insights
+            const insightsContainer = document.getElementById('insights');
+            if (insightsContainer) {
+                const insights = generateInsights(data);
+                if (insights.length > 0) {
+                    insightsContainer.innerHTML = insights.map(insight => `
+                        <div class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
+                            <i class="fas fa-lightbulb text-yellow-500 mt-1"></i>
+                            <div class="text-sm">${insight}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    insightsContainer.innerHTML = `
+                        <div class="text-center py-4 text-gray-500">
+                            <p>Нет доступных инсайтов</p>
+                        </div>
+                    `;
+                }
+            }
+        } catch (error) {
+            console.error('Error updating details:', error);
+        }
+    }
+
+    // Helper functions
+    function getCategoryColor(category) {
+        const colors = {
+            'streaming': '#a78bfa',
+            'software': '#fbbf24',
+            'music': '#34d399',
+            'gaming': '#60a5fa',
+            'education': '#f472b6',
+            'fitness': '#22c55e',
+            'news': '#f59e0b',
+            'productivity': '#8b5cf6',
+            'security': '#ef4444',
+            'storage': '#06b6d4',
+            'other': '#f87171',
+            '': '#6b7280'
+        };
+        return colors[category] || '#6b7280';
+    }
+
+    function getTrendText(trend) {
+        const trends = {
+            'increasing': 'Растущий',
+            'decreasing': 'Снижающийся',
+            'stable': 'Стабильный'
+        };
+        return trends[trend] || 'Стабильный';
+    }
+
+    function generateInsights(data) {
+        try {
+            const insights = [];
+            const categoriesData = data.categories_data || [];
+            const forecast = data.forecast || { trend: 'stable', next_month: 0 };
+            const averageMonthly = data.average_monthly || 0;
+
+            if (categoriesData.length > 0) {
+                // Сортируем категории по проценту (от большего к меньшему)
+                const sortedCategories = [...categoriesData].sort((a, b) => b.percentage - a.percentage);
+                const topCategory = sortedCategories[0];
+                insights.push(`Самая дорогая категория: ${topCategory.category} (${topCategory.percentage || 0}% от общих расходов)`);
+
+                // Добавляем информацию о категории "Без категории"
+                const noCategory = categoriesData.find(cat => cat.category === 'Без категории');
+                if (noCategory && noCategory.percentage > 0) {
+                    insights.push(`Подписки без категории: ${noCategory.percentage}% (${noCategory.count} шт.)`);
+                }
+
+                // Добавляем информацию о количестве категорий
+                if (categoriesData.length > 1) {
+                    insights.push(`У вас подписки в ${categoriesData.length} категориях`);
+                }
+            }
+
+            if (forecast.trend === 'increasing') {
+                insights.push('Ваши расходы растут. Рассмотрите возможность оптимизации подписок.');
+            } else if (forecast.trend === 'decreasing') {
+                insights.push('Отличная работа! Ваши расходы снижаются.');
+            } else {
+                insights.push('Ваши расходы стабильны. Хорошая работа!');
+            }
+
+            // Добавляем информацию о потенциальной экономии
+            if (averageMonthly > 0) {
+                const savings = averageMonthly - (forecast.next_month || 0);
+                if (savings > 0) {
+                    insights.push(`Вы можете сэкономить до ${savings.toFixed(0)} ₽ в месяц, оптимизировав подписки.`);
+                }
+            }
+
+            // Добавляем совет по оптимизации
+            if (categoriesData.length > 3) {
+                insights.push('У вас много разных подписок. Рассмотрите возможность объединения похожих сервисов.');
+            }
+
+            return insights;
+        } catch (error) {
+            console.error('Error generating insights:', error);
+            return ['Не удалось сгенерировать инсайты'];
+        }
+    }
+
+    // Export functionality
+    async function exportAnalytics(format) {
+        try {
+            const response = await fetch(`/api/analytics/export?format=${format}`, {
+                headers: getAuthHeaders()
+            });
+
+            if (response.ok) {
+                if (format === 'csv') {
+                    // Для CSV создаем скачивание файла
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `analytics_${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showToast('CSV файл скачан', 'success');
+                } else {
+                    // Для JSON показываем данные в консоли и создаем скачивание
+                    const data = await response.json();
+                    console.log('Exported analytics:', data);
+
+                    // Создаем скачивание JSON файла
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `analytics_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showToast('JSON файл скачан', 'success');
+                }
+            } else {
+                const errorData = await response.json();
+                showToast(`Ошибка при экспорте: ${errorData.detail || 'Неизвестная ошибка'}`, 'error');
+            }
+        } catch (error) {
+            console.error('Export error:', error);
+            showToast('Ошибка соединения при экспорте', 'error');
+        }
+    }
+
+    // Check authentication and load data
+    function checkAuth() {
+        const token = getToken();
+        if (!token) {
+            window.location.href = '/login';
+            return false;
+        }
+        return true;
+    }
+
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function getAuthHeaders() {
+        const token = getToken();
+        return {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    function showToast(message, type = 'success') {
+        let container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.position = 'fixed';
+            container.style.right = '2.2em';
+            container.style.top = '2.2em';
+            container.style.zIndex = '1200';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        let icon = '';
+        if (type === 'success') icon = '<span class="toast-icon"><i class="fas fa-check-circle" style="color:#22c55e"></i></span>';
+        else if (type === 'error') icon = '<span class="toast-icon"><i class="fas fa-times-circle" style="color:#ef4444"></i></span>';
+        else icon = '<span class="toast-icon"><i class="fas fa-info-circle" style="color:#6366f1"></i></span>';
+
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `${icon}<span>${message}</span><button onclick="this.parentNode.remove()">×</button>`;
+        container.appendChild(toast);
+
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Функция принудительного обновления аналитики
+    async function refreshAnalytics() {
+        console.log('Forcing analytics refresh...');
+        try {
+            // Очищаем кэш на клиенте
+            localStorage.removeItem('analytics_cache');
+
+            // Принудительно обновляем данные
+            await loadAnalytics();
+            showToast('Аналитика обновлена', 'success');
+        } catch (error) {
+            console.error('Error refreshing analytics:', error);
+            showToast('Ошибка при обновлении аналитики', 'error');
+        }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function () {
+        if (checkAuth()) {
+            loadAnalytics();
+        }
+    });
+</script>
+{% endblock %}

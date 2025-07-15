@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}Админ-дэшборд - Subscription Manager{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="/static/css/dashboard.css">
+<div class="min-h-screen flex flex-col items-center justify-center py-10 px-4">
+    <div class="max-w-5xl w-full space-y-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <i class="fas fa-user-shield text-purple-600"></i>Админ-дэшборд
+            </h2>
+            <button id="addAdminBtn"
+                class="btn-primary text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2">
+                <i class="fas fa-user-plus"></i>Добавить админа
+            </button>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+                <i class="fas fa-users text-3xl text-purple-500 mb-2"></i>
+                <div class="text-2xl font-bold" id="statUsers">-</div>
+                <div class="text-gray-600">Пользователей</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+                <i class="fas fa-list text-3xl text-blue-500 mb-2"></i>
+                <div class="text-2xl font-bold" id="statSubs">-</div>
+                <div class="text-gray-600">Подписок всего</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+                <i class="fas fa-bell text-3xl text-orange-500 mb-2"></i>
+                <div class="text-2xl font-bold" id="statNotifs">-</div>
+                <div class="text-gray-600">Уведомлений</div>
+            </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6 mt-6">
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+                <i class="fas fa-user-check text-2xl text-green-500 mb-2"></i>
+                <div class="text-xl font-bold" id="statActiveSubs">-</div>
+                <div class="text-gray-600">Активных подписок</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+                <i class="fas fa-user-times text-2xl text-gray-400 mb-2"></i>
+                <div class="text-xl font-bold" id="statInactiveSubs">-</div>
+                <div class="text-gray-600">Неактивных подписок</div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 mt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i class="fas fa-chart-bar text-purple-500"></i>Аналитика и графики
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Pie Chart: Категории подписок -->
+                <div>
+                    <canvas id="pieCategories" height="220"></canvas>
+                    <div class="text-center text-sm text-gray-500 mt-2">Распределение подписок по категориям</div>
+                </div>
+                <!-- Bar Chart: Активные/неактивные -->
+                <div>
+                    <canvas id="barActiveInactive" height="220"></canvas>
+                    <div class="text-center text-sm text-gray-500 mt-2">Активные / Неактивные подписки</div>
+                </div>
+                <!-- Line Chart: Динамика пользователей -->
+                <div>
+                    <canvas id="lineUsers" height="220"></canvas>
+                    <div class="text-center text-sm text-gray-500 mt-2">Динамика новых пользователей</div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 mt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i class="fas fa-user-cog text-purple-500"></i>Администраторы
+            </h3>
+            <div id="adminList" class="space-y-2"></div>
+        </div>
+    </div>
+</div>
+<!-- Модалка добавления админа -->
+<div id="addAdminModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 modal-backdrop hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200 flex items-center gap-2">
+                <i class="fas fa-user-plus text-purple-600 text-xl"></i>
+                <h3 class="text-lg font-semibold text-gray-900">Добавить администратора</h3>
+            </div>
+            <form id="addAdminForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email или username</label>
+                    <input id="adminIdentifier" type="text" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div id="addAdminError" class="hidden error-message"></div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeAddAdminModal()"
+                        class="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50">Отмена</button>
+                    <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md"><i
+                            class="fas fa-user-plus mr-2"></i>Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    async function loadAdminStats() {
+        const resp = await fetch('/api/admin/stats', { headers: getAuthHeaders() });
+        if (!resp.ok) return;
+        const stats = await resp.json();
+        document.getElementById('statUsers').textContent = stats.users;
+        document.getElementById('statSubs').textContent = stats.subscriptions;
+        document.getElementById('statNotifs').textContent = stats.notifications;
+        document.getElementById('statActiveSubs').textContent = stats.active_subscriptions;
+        document.getElementById('statInactiveSubs').textContent = stats.inactive_subscriptions;
+        // Загрузить список админов
+        loadAdminList();
+    }
+    async function loadAdminList() {
+        const resp = await fetch('/api/admin/list', { headers: getAuthHeaders() });
+        if (!resp.ok) return;
+        const admins = await resp.json();
+        const container = document.getElementById('adminList');
+        container.innerHTML = admins.map(a => `<div class='flex items-center gap-2'><i class='fas fa-user-shield text-purple-500'></i><span>${a.username} (${a.email})</span></div>`).join('');
+    }
+    async function loadCharts() {
+        // 1. Категории подписок (pie)
+        let catLabels = [], catData = [];
+        try {
+            const resp = await fetch('/api/dashboard/stats', { headers: getAuthHeaders() });
+            if (resp.ok) {
+                const stats = await resp.json();
+                catLabels = stats.category_stats.map(c => c.category || 'Без категории');
+                catData = stats.category_stats.map(c => c.count);
+            }
+        } catch { }
+        new Chart(document.getElementById('pieCategories'), {
+            type: 'pie',
+            data: {
+                labels: catLabels.length ? catLabels : ['Нет данных'],
+                datasets: [{
+                    data: catData.length ? catData : [1],
+                    backgroundColor: [
+                        '#a78bfa', '#fbbf24', '#34d399', '#60a5fa', '#f87171', '#f472b6', '#facc15', '#818cf8'
+                    ],
+                }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+        // 2. Активные/неактивные (bar)
+        let active = 0, inactive = 0;
+        try {
+            const resp = await fetch('/api/admin/stats', { headers: getAuthHeaders() });
+            if (resp.ok) {
+                const stats = await resp.json();
+                active = stats.active_subscriptions;
+                inactive = stats.inactive_subscriptions;
+            }
+        } catch { }
+        new Chart(document.getElementById('barActiveInactive'), {
+            type: 'bar',
+            data: {
+                labels: ['Активные', 'Неактивные'],
+                datasets: [{
+                    label: 'Подписки',
+                    data: [active, inactive],
+                    backgroundColor: ['#34d399', '#f87171']
+                }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+        // 3. Динамика пользователей (line, mock)
+        const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+        const usersData = [5, 8, 12, 20, 30, 45, 60, 80, 100, 120, 140, 160]; // Мок-данные
+        new Chart(document.getElementById('lineUsers'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Пользователи',
+                    data: usersData,
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99,102,241,0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#6366f1',
+                }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        loadAdminStats();
+        document.getElementById('addAdminBtn').onclick = openAddAdminModal;
+        loadCharts();
+    });
+    function openAddAdminModal() {
+        document.getElementById('addAdminModal').classList.remove('hidden');
+    }
+    function closeAddAdminModal() {
+        document.getElementById('addAdminModal').classList.add('hidden');
+        document.getElementById('addAdminForm').reset();
+        document.getElementById('addAdminError').classList.add('hidden');
+    }
+    document.getElementById('addAdminForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const val = document.getElementById('adminIdentifier').value.trim();
+        const errorDiv = document.getElementById('addAdminError');
+        errorDiv.classList.add('hidden');
+        if (!val) {
+            errorDiv.textContent = 'Введите email или username';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+        const resp = await fetch('/api/admin/add', {
+            method: 'POST',
+            headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({ identifier: val })
+        });
+        if (resp.ok) {
+            closeAddAdminModal();
+            showToast('Админ успешно добавлен!', 'success');
+            loadAdminList();
+        } else {
+            const data = await resp.json();
+            errorDiv.textContent = data.detail || 'Ошибка добавления';
+            errorDiv.classList.remove('hidden');
+        }
+    });
+</script>
+{% endblock %}

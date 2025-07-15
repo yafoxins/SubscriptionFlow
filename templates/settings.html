@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки - Subscription Manager{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 relative">
+    <!-- Blurred Background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-100 via-blue-50 to-pink-100 opacity-60"></div>
+
+    <!-- Blurred Content -->
+    <div class="absolute inset-0 backdrop-blur-sm"></div>
+
+    <!-- Content Overlay -->
+    <div class="relative z-10">
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <div class="flex items-center">
+                        <a href="/dashboard" class="text-gray-400 hover:text-gray-600 mr-4 transition-colors">
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        <h1 class="text-2xl font-bold text-gray-900">
+                            <i class="fas fa-cog mr-3 text-purple-600"></i>Настройки
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Coming Soon Card -->
+            <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
+                <div class="relative">
+                    <!-- Decorative Background -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-pink-500/10">
+                    </div>
+
+                    <!-- Content -->
+                    <div class="relative p-12 text-center">
+                        <!-- Icon -->
+                        <div class="mb-8">
+                            <div
+                                class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-lg">
+                                <i class="fas fa-tools text-3xl text-white"></i>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                            Страница настроек
+                        </h2>
+
+                        <!-- Subtitle -->
+                        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                            Мы работаем над созданием удобных настроек для интеграции с календарями,
+                            персонализации уведомлений и других функций.
+                        </p>
+
+                        <!-- Features Preview -->
+                        <div class="grid md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                                <div
+                                    class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg mb-4 mx-auto">
+                                    <i class="fab fa-google text-red-500 text-xl"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Google Calendar</h3>
+                                <p class="text-sm text-gray-600">Синхронизация с Google Calendar для автоматических
+                                    напоминаний</p>
+                            </div>
+
+                            <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                                <div
+                                    class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4 mx-auto">
+                                    <i class="fab fa-microsoft text-blue-500 text-xl"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Outlook Calendar</h3>
+                                <p class="text-sm text-gray-600">Интеграция с Outlook для корпоративных пользователей
+                                </p>
+                            </div>
+
+                            <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                                <div
+                                    class="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4 mx-auto">
+                                    <i class="fas fa-bell text-green-500 text-xl"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Уведомления</h3>
+                                <p class="text-sm text-gray-600">Настройка времени и способов уведомлений</p>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+                                <span>Прогресс разработки</span>
+                                <span>25%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
+                                    style="width: 25%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="/dashboard"
+                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Вернуться к дашборду
+                            </a>
+                            <button onclick="showComingSoonToast()"
+                                class="inline-flex items-center px-6 py-3 bg-white/80 backdrop-blur-sm text-gray-700 font-medium rounded-lg border border-gray-200 hover:bg-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <i class="fas fa-bell mr-2"></i>
+                                Подписаться на обновления
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="mt-8 text-center">
+                <p class="text-gray-500 text-sm">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Ожидаемая дата релиза: <span class="font-medium">Q3 2025</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showComingSoonToast() {
+        // Создаем красивый toast
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-4 rounded-lg shadow-2xl transform translate-x-full transition-transform duration-300 z-50';
+        toast.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-rocket mr-3 text-xl"></i>
+                <div>
+                    <div class="font-semibold">Уведомления включены!</div>
+                    <div class="text-sm opacity-90">Мы сообщим, когда настройки будут готовы</div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Анимация появления
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+
+        // Автоматическое скрытие
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 4000);
+    }
+
+    // Добавляем анимацию при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function () {
+        const card = document.querySelector('.bg-white\\/90');
+        if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        }
+    });
+</script>
+
+<style>
+    /* Дополнительные стили для красивого блюра */
+    .backdrop-blur-sm {
+        backdrop-filter: blur(8px);
+    }
+
+    .backdrop-blur-md {
+        backdrop-filter: blur(12px);
+    }
+
+    /* Анимация для градиента */
+    @keyframes gradient-shift {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .bg-gradient-to-br {
+        background-size: 200% 200%;
+        animation: gradient-shift 15s ease infinite;
+    }
+</style>
+{% endblock %}

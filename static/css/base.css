@@ -1,0 +1,87 @@
+/* Стили из base.html */
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* Современный футер */
+.footer-modern {
+    background: linear-gradient(90deg, #f8fafc 60%, #f3e8ff 100%);
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -2px 16px 0 rgba(120, 80, 200, 0.04);
+    position: relative;
+}
+
+.footer-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #a78bfa 0%, #6366f1 100%);
+    border-radius: 2px;
+    margin: 0 auto 10px auto;
+    opacity: 0.15;
+}
+
+.footer-text {
+    font-size: 0.98em;
+    color: #6b7280;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    opacity: 0.95;
+}
+
+.footer-icon {
+    color: #a78bfa;
+    font-size: 1.1em;
+    opacity: 0.7;
+}
+
+.footer-link {
+    color: #a78bfa;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.footer-link:hover {
+    color: #7c3aed;
+    text-decoration: underline;
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    background: linear-gradient(90deg, #a78bfa 0%, #6366f1 100%);
+    color: #fff;
+    font-size: 0.85em;
+    font-weight: 600;
+    border-radius: 0.6em;
+    padding: 0.15em 0.7em 0.15em 0.5em;
+    margin-left: 0.3em;
+    box-shadow: 0 1px 4px rgba(120, 80, 200, 0.08);
+    letter-spacing: 0.01em;
+}
+
+.admin-badge i {
+    color: #ffe066;
+    font-size: 1em;
+    margin-right: 0.2em;
+}
