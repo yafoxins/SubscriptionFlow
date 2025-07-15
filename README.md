@@ -446,7 +446,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 ### 📞 Контакты
 
-- **Telegram**: [@yafoxins](https://t.me/yafoxins)
+- **Telegram**: [@yafoxin](https://t.me/yafoxin)
 - **GitHub**: [yafoxins](https://github.com/yafoxins)
 - **Email**: yafoxins@gmail.com
 
